@@ -57,6 +57,26 @@ class ThresholdPolicy:
     between ``suspected_biallelic_fraction`` and ``confirmed_biallelic_fraction``
     is deliberately reported as AMBIGUOUS rather than forced into CONFIRMED or
     SUSPECTED_SWAP, since no real observation falls in that band yet.
+
+    ``min_coverage_breadth`` carries a distinct, more basic caveat: it was
+    carried over unchanged from an earlier design that computed
+    ``coverage_breadth`` against the wrong denominator (the ASEReadCounter
+    output row count, which silently excludes zero-read loci -- see the
+    module docstring). It has NOT been re-validated against the corrected
+    denominator (``total_candidate_sites``, which is always >= the old one).
+    Zero-read sites are deliberately included in this denominator because
+    they are the strongest real signal of a degraded/failed RNA library (see
+    the real Phase 1 sample ``26167S0043``), but that same inclusion could in
+    principle also push a genuinely well-matched sample's breadth down for
+    an unrelated reason: normal tissue-specific non-expression at some
+    capture-region germline loci, which has nothing to do with sample
+    identity. Whether ``0.30`` remains a sound cutoff once every sample's
+    breadth is computed against the corrected denominator has not been
+    checked empirically -- only one real sample (``26167S0040``) has been
+    recomputed so far, and its corrected breadth (78.35%) is comfortably
+    clear of this threshold either way. Recomputing the other four real
+    Phase 1 samples under the corrected denominator is open follow-up work,
+    not yet done.
     """
 
     min_covered_sites: int = 50

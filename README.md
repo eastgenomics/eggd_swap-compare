@@ -68,6 +68,8 @@ not enough to certify an exact production boundary.
 | `SUSPECTED_SWAP` | Coverage breadth ≥ 30%, biallelic % < 55% |
 | `AMBIGUOUS` | Everything else — no real observation falls in this band yet, reported explicitly rather than forced into `CONFIRMED` or `SUSPECTED_SWAP` |
 
+**Open caveat on the `30%` coverage-breadth cutoff specifically** (distinct from the biallelic-threshold caveat above): zero-read sites are deliberately included in the `coverage_breadth` denominator, because they're the strongest real signal of a degraded/failed RNA library (see the real Phase 1 sample `26167S0043`, whose library was ~10x smaller than the others). But that same inclusion could, in principle, also lower a genuinely well-matched sample's breadth for an unrelated reason — normal tissue-specific non-expression at some capture-region germline loci, nothing to do with sample identity. The `30%` cutoff was carried over unchanged from an earlier design that computed breadth against the wrong (inflated) denominator and has **not** been re-validated against the corrected one. Only one real sample (`26167S0040`) has been recomputed under the corrected denominator so far (78.35%, comfortably clear either way) — recomputing the other four real Phase 1 samples is open follow-up work, not yet done.
+
 Every report carries `validation_only_no_clinical_action: true` and
 `reassignment_recommendation: false`. No verdict from this app ever triggers,
 or is permitted to trigger, automated relabelling, LIMS/Epic/SampleSheet/report
