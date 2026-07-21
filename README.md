@@ -68,7 +68,19 @@ not enough to certify an exact production boundary.
 | `SUSPECTED_SWAP` | Coverage breadth ≥ 30%, biallelic % < 55% |
 | `AMBIGUOUS` | Everything else — no real observation falls in this band yet, reported explicitly rather than forced into `CONFIRMED` or `SUSPECTED_SWAP` |
 
-**Open caveat on the `30%` coverage-breadth cutoff specifically** (distinct from the biallelic-threshold caveat above): zero-read sites are deliberately included in the `coverage_breadth` denominator, because they're the strongest real signal of a degraded/failed RNA library (see the real Phase 1 sample `26167S0043`, whose library was ~10x smaller than the others). But that same inclusion could, in principle, also lower a genuinely well-matched sample's breadth for an unrelated reason — normal tissue-specific non-expression at some capture-region germline loci, nothing to do with sample identity. The `30%` cutoff was carried over unchanged from an earlier design that computed breadth against the wrong (inflated) denominator and has **not** been re-validated against the corrected one. Only one real sample (`26167S0040`) has been recomputed under the corrected denominator so far (78.35%, comfortably clear either way) — recomputing the other four real Phase 1 samples is open follow-up work, not yet done.
+**Open caveat on the `30%` coverage-breadth cutoff specifically** (distinct from the biallelic-threshold caveat above): zero-read sites are deliberately included in the `coverage_breadth` denominator, because they're the strongest real signal of a degraded/failed RNA library (see the real Phase 1 sample `26167S0043`, whose library was ~10x smaller than the others).
+
+Recomputed against all five real Phase 1 samples under the corrected denominator:
+
+| Sample | Total candidate sites | Covered | Coverage breadth | Verdict |
+|---|---|---|---|---|
+| `26167S0040` | 231 | 181 | 78.35% | CONFIRMED |
+| `26180S0043` | 84 | 74 | 88.10% | CONFIRMED |
+| `26167S0009` | 257 | 237 | 92.22% | SUSPECTED_SWAP (own nominated pairing) |
+| `26163S0038` | 232 | 223 | 96.12% | SUSPECTED_SWAP (own nominated pairing) |
+| `26167S0043` | 163 | 25 | **15.34%** | INCONCLUSIVE (known genuinely degraded library) |
+
+Every sample with a real informative verdict clears `30%` by a wide margin (lowest is 78.35%); only the one known-degraded library collapses to 15.34% and correctly triggers `INCONCLUSIVE` rather than a swap call. This is real support that the corrected (larger) denominator does not drag a biologically well-covered sample's breadth down toward the threshold in practice. It remains five real samples, though -- not a large or diverse enough dataset to certify `0.30` as a final production cutoff, and the underlying concern (tissue-specific non-expression at some capture-region loci lowering breadth for reasons unrelated to sample identity) has not been ruled out mechanistically, only shown not to bite on this particular dataset so far.
 
 Every report carries `validation_only_no_clinical_action: true` and
 `reassignment_recommendation: false`. No verdict from this app ever triggers,

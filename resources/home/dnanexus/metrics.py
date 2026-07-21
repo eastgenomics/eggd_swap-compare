@@ -62,21 +62,25 @@ class ThresholdPolicy:
     carried over unchanged from an earlier design that computed
     ``coverage_breadth`` against the wrong denominator (the ASEReadCounter
     output row count, which silently excludes zero-read loci -- see the
-    module docstring). It has NOT been re-validated against the corrected
-    denominator (``total_candidate_sites``, which is always >= the old one).
-    Zero-read sites are deliberately included in this denominator because
-    they are the strongest real signal of a degraded/failed RNA library (see
-    the real Phase 1 sample ``26167S0043``), but that same inclusion could in
-    principle also push a genuinely well-matched sample's breadth down for
-    an unrelated reason: normal tissue-specific non-expression at some
-    capture-region germline loci, which has nothing to do with sample
-    identity. Whether ``0.30`` remains a sound cutoff once every sample's
-    breadth is computed against the corrected denominator has not been
-    checked empirically -- only one real sample (``26167S0040``) has been
-    recomputed so far, and its corrected breadth (78.35%) is comfortably
-    clear of this threshold either way. Recomputing the other four real
-    Phase 1 samples under the corrected denominator is open follow-up work,
-    not yet done.
+    module docstring). Zero-read sites are deliberately included in the
+    corrected denominator (``total_candidate_sites``) because they are the
+    strongest real signal of a degraded/failed RNA library (see the real
+    Phase 1 sample ``26167S0043``).
+
+    Recomputed against all five real Phase 1 samples under the corrected
+    denominator (not just one): the four samples with any real informative
+    verdict showed coverage breadth of 78.35% (``26167S0040``, CONFIRMED),
+    88.10% (``26180S0043``, CONFIRMED), 92.22% (``26167S0009``,
+    SUSPECTED_SWAP against its own nominated pairing), and 96.12%
+    (``26163S0038``, SUSPECTED_SWAP against its own nominated pairing) -- all
+    comfortably clear of ``0.30``. Only the one genuinely degraded sample
+    (``26167S0043``) collapsed to 15.34%, correctly triggering INCONCLUSIVE
+    rather than a swap call. This is real support that the corrected
+    denominator does not drag a biologically well-covered sample's breadth
+    down toward the threshold in practice -- but it remains five real
+    samples, one of which is the only INCONCLUSIVE case observed, so it is
+    still not a large enough or diverse enough dataset to certify ``0.30`` as
+    a final production cutoff.
     """
 
     min_covered_sites: int = 50
