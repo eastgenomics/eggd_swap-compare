@@ -119,3 +119,21 @@ python3 -m pytest tests/ -v
 Pure Python, no DNAnexus/GATK dependency — covers TSV parsing/validation,
 the zero-read-sites regression this app exists to get right, and all four
 verdict classification paths.
+
+## Built (unpublished) on DNAnexus
+
+| | |
+|---|---|
+| App ID | `app-J9PG5vj4pyzZ3Y4zvXY2PBJ2` |
+| Name / version | `eggd_swap-compare` / `1.0.0` |
+| Jira story | [DI-3662](https://cuhbioinformatics.atlassian.net/browse/DI-3662) |
+| Billed to | `org-emee_1` |
+| Region | `aws:eu-central-1` |
+| Built from project | `project-J9PBZG04b0g16X701bjjF6VF` (`004_260720_swap_check_apps`) |
+| Developers | `org-emee_1` only |
+| Authorized users | `org-emee_1` only |
+| Published | No -- built via `dx build --app --bill-to org-emee_1 .`, not `dx publish` |
+
+## Repository
+
+Pushed to [eastgenomics/eggd_swap-compare](https://github.com/eastgenomics/eggd_swap-compare), branch `dev` -> [PR #1](https://github.com/eastgenomics/eggd_swap-compare/pull/1). `main` and `dev` share a common ancestor (the initial commit); no history rewriting was needed for this PR.
