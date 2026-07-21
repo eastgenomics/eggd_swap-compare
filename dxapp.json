@@ -38,9 +38,9 @@
     {
       "name": "reference_fasta",
       "label": "GRCh38 reference FASTA",
-      "help": "The exact GRCh38 reference used to align rna_bam (e.g. the CTAT reference used by STAR/Eunomia) -- must be the same reference used to prepare site_vcf.",
+      "help": "The exact GRCh38 reference used to align rna_bam (e.g. the CTAT reference used by STAR/Eunomia) -- must be the same reference used to prepare site_vcf. Must be an uncompressed FASTA: a bgzipped reference would also need a .gzi companion index, which this app does not accept as an input and code.sh does not provide.",
       "class": "file",
-      "patterns": ["*.fa", "*.fasta", "*.fa.gz", "*.fasta.gz"],
+      "patterns": ["*.fa", "*.fasta"],
       "optional": false
     },
     {

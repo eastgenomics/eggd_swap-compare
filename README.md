@@ -94,7 +94,7 @@ an escalation to a human for chain-of-custody investigation.
 |---|---|---|
 | `site_vcf` / `site_vcf_tbi` | file | Output of `eggd_swap-prep-dna-vcf` for one DNA sample |
 | `rna_bam` / `rna_bam_bai` | file | PanCan RNA BAM (GRCh38) for the candidate/suspected specimen |
-| `reference_fasta` / `_fai` / `reference_dict` | file | Must be the exact same GRCh38 reference used to prepare `site_vcf` |
+| `reference_fasta` / `_fai` / `reference_dict` | file | Must be the exact same GRCh38 reference used to prepare `site_vcf`. Must be uncompressed -- a bgzipped FASTA would also need a `.gzi` companion index, which this app has no input for |
 | `gatk_jar` | file | GATK jar, supplied directly — no asset-selection indirection |
 | `dna_sample_id` / `rna_sample_id` | string, optional | Labels only — never used for pairing logic |
 
