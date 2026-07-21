@@ -68,6 +68,20 @@ not enough to certify an exact production boundary.
 | `SUSPECTED_SWAP` | Coverage breadth ≥ 30%, biallelic % < 55% |
 | `AMBIGUOUS` | Everything else — no real observation falls in this band yet, reported explicitly rather than forced into `CONFIRMED` or `SUSPECTED_SWAP` |
 
+**Open caveat on the `30%` coverage-breadth cutoff specifically** (distinct from the biallelic-threshold caveat above): zero-read sites are deliberately included in the `coverage_breadth` denominator, because they're the strongest real signal of a degraded/failed RNA library (see the real Phase 1 sample `26167S0043`, whose library was ~10x smaller than the others).
+
+Recomputed against all five real Phase 1 samples under the corrected denominator:
+
+| Sample | Total candidate sites | Covered | Coverage breadth | Verdict |
+|---|---|---|---|---|
+| `26167S0040` | 231 | 181 | 78.35% | CONFIRMED |
+| `26180S0043` | 84 | 74 | 88.10% | CONFIRMED |
+| `26167S0009` | 257 | 237 | 92.22% | SUSPECTED_SWAP (own nominated pairing) |
+| `26163S0038` | 232 | 223 | 96.12% | SUSPECTED_SWAP (own nominated pairing) |
+| `26167S0043` | 163 | 25 | **15.34%** | INCONCLUSIVE (known genuinely degraded library) |
+
+Every sample with a real informative verdict clears `30%` by a wide margin (lowest is 78.35%); only the one known-degraded library collapses to 15.34% and correctly triggers `INCONCLUSIVE` rather than a swap call. This is real support that the corrected (larger) denominator does not drag a biologically well-covered sample's breadth down toward the threshold in practice. It remains five real samples, though -- not a large or diverse enough dataset to certify `0.30` as a final production cutoff, and the underlying concern (tissue-specific non-expression at some capture-region loci lowering breadth for reasons unrelated to sample identity) has not been ruled out mechanistically, only shown not to bite on this particular dataset so far.
+
 Every report carries `validation_only_no_clinical_action: true` and
 `reassignment_recommendation: false`. No verdict from this app ever triggers,
 or is permitted to trigger, automated relabelling, LIMS/Epic/SampleSheet/report
@@ -80,7 +94,7 @@ an escalation to a human for chain-of-custody investigation.
 |---|---|---|
 | `site_vcf` / `site_vcf_tbi` | file | Output of `eggd_swap-prep-dna-vcf` for one DNA sample |
 | `rna_bam` / `rna_bam_bai` | file | PanCan RNA BAM (GRCh38) for the candidate/suspected specimen |
-| `reference_fasta` / `_fai` / `reference_dict` | file | Must be the exact same GRCh38 reference used to prepare `site_vcf` |
+| `reference_fasta` / `_fai` / `reference_dict` | file | Must be the exact same GRCh38 reference used to prepare `site_vcf`. Must be uncompressed -- a bgzipped FASTA would also need a `.gzi` companion index, which this app has no input for |
 | `gatk_jar` | file | GATK jar, supplied directly — no asset-selection indirection |
 | `dna_sample_id` / `rna_sample_id` | string, optional | Labels only — never used for pairing logic |
 
@@ -105,3 +119,21 @@ python3 -m pytest tests/ -v
 Pure Python, no DNAnexus/GATK dependency — covers TSV parsing/validation,
 the zero-read-sites regression this app exists to get right, and all four
 verdict classification paths.
+
+## Built (unpublished) on DNAnexus
+
+| | |
+|---|---|
+| App ID | `app-J9PG5vj4pyzZ3Y4zvXY2PBJ2` |
+| Name / version | `eggd_swap-compare` / `1.0.0` |
+| Jira story | [DI-3662](https://cuhbioinformatics.atlassian.net/browse/DI-3662) |
+| Billed to | `org-emee_1` |
+| Region | `aws:eu-central-1` |
+| Built from project | `project-J9PBZG04b0g16X701bjjF6VF` (`004_260720_swap_check_apps`) |
+| Developers | `org-emee_1` only |
+| Authorized users | `org-emee_1` only |
+| Published | No -- built via `dx build --app --bill-to org-emee_1 .`, not `dx publish` |
+
+## Repository
+
+Pushed to [eastgenomics/eggd_swap-compare](https://github.com/eastgenomics/eggd_swap-compare), branch `dev` -> [PR #1](https://github.com/eastgenomics/eggd_swap-compare/pull/1). `main` and `dev` share a common ancestor (the initial commit); no history rewriting was needed for this PR.
