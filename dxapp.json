@@ -1,0 +1,138 @@
+{
+  "name": "eggd_swap-compare",
+  "title": "RNA-swap identity QC: compare DNA site list against an RNA BAM",
+  "summary": "Run GATK ASEReadCounter for one prepared DNA site list against one RNA BAM and classify the result",
+  "version": "1.0.0",
+  "dxapi": "1.0.0",
+  "inputSpec": [
+    {
+      "name": "site_vcf",
+      "label": "Prepared DNA germline site VCF (GRCh38, capture-restricted)",
+      "help": "The site_vcf output of eggd_swap-prep-dna-vcf for one DNA sample. Used as both -V and -L for ASEReadCounter.",
+      "class": "file",
+      "patterns": ["*.vcf.gz"],
+      "optional": false
+    },
+    {
+      "name": "site_vcf_tbi",
+      "label": "Tabix index for site_vcf",
+      "class": "file",
+      "patterns": ["*.vcf.gz.tbi"],
+      "optional": false
+    },
+    {
+      "name": "rna_bam",
+      "label": "PanCan RNA BAM (GRCh38)",
+      "help": "STAR-aligned, duplicate-marked RNA BAM for the candidate matched (or suspected-swap candidate) specimen.",
+      "class": "file",
+      "patterns": ["*.bam"],
+      "optional": false
+    },
+    {
+      "name": "rna_bam_bai",
+      "label": "BAM index for rna_bam",
+      "class": "file",
+      "patterns": ["*.bai"],
+      "optional": false
+    },
+    {
+      "name": "reference_fasta",
+      "label": "GRCh38 reference FASTA",
+      "help": "The exact GRCh38 reference used to align rna_bam (e.g. the CTAT reference used by STAR/Eunomia) -- must be the same reference used to prepare site_vcf.",
+      "class": "file",
+      "patterns": ["*.fa", "*.fasta", "*.fa.gz", "*.fasta.gz"],
+      "optional": false
+    },
+    {
+      "name": "reference_fasta_fai",
+      "label": "Reference FASTA index (.fai)",
+      "class": "file",
+      "patterns": ["*.fai"],
+      "optional": false
+    },
+    {
+      "name": "reference_dict",
+      "label": "Reference sequence dictionary (.dict)",
+      "class": "file",
+      "patterns": ["*.dict"],
+      "optional": false
+    },
+    {
+      "name": "gatk_jar",
+      "label": "GATK jar (ASEReadCounter)",
+      "help": "Provided directly as a file input rather than resolved through an asset-selection manifest, to keep this app free of any manifest/candidate/validation-mode indirection. The caller is responsible for supplying the correct, fixed GATK build every time.",
+      "class": "file",
+      "patterns": ["*.jar"],
+      "optional": false
+    },
+    {
+      "name": "dna_sample_id",
+      "label": "DNA sample/specimen identifier (label only)",
+      "help": "Used only to label comparison_report_json for human readability. Never used for pairing/discovery logic -- the caller is responsible for supplying the correct site_vcf/rna_bam pair.",
+      "class": "string",
+      "optional": true
+    },
+    {
+      "name": "rna_sample_id",
+      "label": "RNA sample/specimen identifier (label only)",
+      "class": "string",
+      "optional": true
+    }
+  ],
+  "outputSpec": [
+    {
+      "name": "comparison_report_json",
+      "label": "Comparison report (metrics, verdict, provenance)",
+      "class": "file"
+    },
+    {
+      "name": "comparison_summary_txt",
+      "label": "Human-readable one-page summary",
+      "class": "file"
+    },
+    {
+      "name": "ase_table",
+      "label": "Raw ASEReadCounter output (audit trail)",
+      "class": "file"
+    }
+  ],
+  "runSpec": {
+    "interpreter": "bash",
+    "file": "src/code.sh",
+    "distribution": "Ubuntu",
+    "release": "24.04",
+    "version": "0",
+    "timeoutPolicy": {
+      "*": {
+        "hours": 2
+      }
+    },
+    "executionPolicy": {
+      "restartOn": {
+        "SpotInstanceInterruption": 2
+      }
+    },
+    "execDepends": [
+      {"name": "python3"},
+      {"name": "openjdk-17-jre-headless"}
+    ],
+    "assetDepends": [
+      {
+        "name": "htslib_suite_asset",
+        "id": "record-J1YBvy049yKpP7kk1j4ggqxZ"
+      }
+    ]
+  },
+  "regionalOptions": {
+    "aws:eu-central-1": {
+      "systemRequirements": {
+        "*": {
+          "instanceType": "mem1_ssd1_v2_x8"
+        }
+      }
+    }
+  },
+  "access": {
+    "network": []
+  }
+}
